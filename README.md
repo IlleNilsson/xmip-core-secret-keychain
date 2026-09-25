@@ -1,42 +1,24 @@
-# Xmip repository template — Rust
+# xmip-core-secret-keychain
 
-This repository is the starter snapshot for a Rust Xmip module repository. It is
-not an Xmip runtime capability.
+The macOS keychain as the key home's store (ADR-0063 clause 4). A technology
+of [xmip-core-secret](https://github.com/IlleNilsson/xmip-core-secret).
 
-For a .NET 11 surface — the CLI, the PowerShell module, the MAUI desktop GUI or
-the Blazor web GUI — use
-[xmip-template-dotnet](https://github.com/IlleNilsson/xmip-template-dotnet)
-instead. ADR-0014: every user-interfacing module is .NET 11, and
-`xmip-core-abi` is the exception.
+A key-encryption key is thirty-two random bytes kept as a generic password
+item of the Service Identity's keychain: the service is the one
+`Keychain::new` is given (`Xmip` by convention), the account is the key's
+name. The keychain encrypts it and hands it only to the identity that owns
+it. An existing item is never replaced.
 
-A repository generated from this template has independent history. Later
-template changes do not automatically rewrite generated repositories.
-
-## Before implementation
-
-Follow [TEMPLATE_SETUP.md](TEMPLATE_SETUP.md), and item 3 first. The new
-repository must be classified and declared in the authoritative Xmip
-architecture manifest before its responsibility or dependencies are treated as
-accepted architecture.
-
-## Toolchain
-
-`rust-toolchain.toml` pins the toolchain for the whole estate. rustup reads it
-automatically and installs what is missing. Do not change it here — raising it
-is one deliberate change across every repository.
-
-## Shared governance
-
-Repository-specific licensing remains explicit in [LICENSE](LICENSE).
-Contribution, security, support, issue and pull-request defaults are inherited
-from [IlleNilsson/.github](https://github.com/IlleNilsson/.github) when they are
-not overridden locally.
+`Keychain` is a `secret::KekHolder`; `secret::Held::new(Keychain::new("Xmip"))`
+is the `KeyStore`. The Security framework is reached through the
+`security-framework` crate, whose safe functions hold the FFI, so this crate
+keeps `unsafe_code = "forbid"`. On other platforms the crate is empty.
 
 ## Verification
 
-The included workflow is manual-only and calls the versioned shared workflow at
-`IlleNilsson/.github@v1`. It does not run on pushes, pull requests or a
-schedule.
-
-The ordered stages are formatting, semantic analysis, linting, compilation and
-linking, and test execution. Packaging and publishing are not configured.
+**Not run on macOS.** The estate's machines are Windows and AlmaLinux; the
+crate builds there as the empty crate it is on those platforms, and its
+macOS code and tests (a key wraps and unwraps through the keychain, a missing
+key is refused) wait for a macOS machine. ADR-0015 clause 7 makes macOS a
+development target. The workflow is manual-only and calls the versioned
+shared workflow at `IlleNilsson/.github@v1`.
