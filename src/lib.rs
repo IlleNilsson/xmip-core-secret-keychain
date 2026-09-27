@@ -88,7 +88,7 @@ mod tests {
     fn a_key_wraps_and_unwraps_through_the_keychain() {
         let store = Held::new(Keychain::new("Xmip test"));
         let kek = name("round");
-        let key = DataKey::generate().expect("key");
+        let key = DataKey::generate();
         let wrapped = store.wrap(&kek, &key).expect("wrapped");
         let back = store.unwrap(&kek, &wrapped).expect("unwrapped");
         let sealed = key.seal(b"a", b"payload").expect("sealed");
