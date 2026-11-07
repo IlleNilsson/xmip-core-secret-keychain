@@ -79,6 +79,7 @@ impl KekHolder for Keychain {
 mod tests {
     use super::*;
     use secret::{DataKey, Held, KeyStore};
+    use std::assert_matches;
 
     fn name(text: &str) -> KekName {
         KekName::new(&format!("{text}-{}", std::process::id())).expect("name")
@@ -98,9 +99,9 @@ mod tests {
     #[test]
     fn a_missing_key_is_refused_by_name() {
         let store = Held::new(Keychain::new("Xmip test"));
-        assert!(matches!(
+        assert_matches!(
             store.unwrap(&name("absent"), &[0; 60]),
             Err(SecretError::MissingKek { .. })
-        ));
+        );
     }
 }
