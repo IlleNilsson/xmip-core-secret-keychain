@@ -13,15 +13,15 @@ publish = false
 [lib]
 path = "src/lib.rs"
 
-[dependencies]
+# Every dependency is macOS's alone: off macOS the crate is empty, and cargo
+# refuses a dependency a build does not use (unused_dependencies, Cargo 1.100).
+[target.'cfg(target_os = "macos")'.dependencies]
 # A Technology depends on its parent Capability, never the reverse
 # (repository-model.md). KekHolder, the wrapping and the errors live there;
 # this crate only keeps the key.
 secret = { package = "xmip-core-secret", git = "https://github.com/IlleNilsson/xmip-core-secret", branch = "main" }
 # The key's bytes are overwritten when they are dropped.
 zeroize = "1"
-
-[target.'cfg(target_os = "macos")'.dependencies]
 # Generic password items behind safe functions. A module crate forbids unsafe,
 # and this is where the Security framework's FFI lives instead of here
 # (ADR-0050, amendment 2026-09-16: where unsafe may live is the owner's
