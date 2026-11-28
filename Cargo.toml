@@ -16,7 +16,7 @@ path = "src/lib.rs"
 # A Technology depends on its parent Capability, never the reverse
 # (repository-model.md). KekHolder, the wrapping and the errors live there;
 # this crate only keeps the key.
-secret = { package = "xmip-core-secret", git = "https://github.com/IlleNilsson/xmip-core-secret", branch = "main" }
+secret = { workspace = true }
 # The key's bytes are overwritten when they are dropped.
 zeroize = "1"
 # Generic password items behind safe functions. A module crate forbids unsafe,
